@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 """
-clean_alert.py - Ringkas dokumen alert Elastic Security (JSON) untuk pelaporan SOC.
-
 Pendekatan: BUANG NOISE YANG SUDAH DIKETAHUI, bukan whitelist field.
 Semua field lain dipertahankan apa adanya (nilai tidak diubah sama sekali),
 sehingga sumber log yang belum tervalidasi tetap terlihat lengkap.
@@ -30,13 +28,10 @@ PARAMS_PREFIX = "kibana.alert.rule.parameters."
 PARAMS_KEEP = {"query"}
 MULTIFIELD_SUFFIXES = (".text", ".keyword", ".caseless")
 
-
 def is_empty(v):
     return v is None or v == "" or v == [] or v == {}
 
-
 def flatten(obj, prefix=""):
-    """Ratakan dict bersarang ke dotted key. List dibiarkan apa adanya."""
     out = {}
     if isinstance(obj, dict):
         for k, v in obj.items():
@@ -46,7 +41,6 @@ def flatten(obj, prefix=""):
             else:
                 out[key] = v
     return out
-
 
 def should_drop(key):
     if key.startswith(DROP_PREFIXES):
@@ -62,12 +56,10 @@ def should_drop(key):
         return "ancestors"
     return None
 
-
 def unwrap(v):
     if isinstance(v, list) and len(v) == 1:
         return v[0]
     return v
-
 
 def load_docs(path):
     raw = open(path, encoding="utf-8").read()
@@ -83,7 +75,6 @@ def load_docs(path):
         else:
             flat.append(d)
     return raw, flat
-
 
 def clean_doc(doc):
     src = doc.get("_source")
@@ -129,10 +120,8 @@ def clean_doc(doc):
         extra[k] = unwrap(v)
     return kept, extra, dropped, ancestors_n
 
-
 def fmt(v):
     return json.dumps(v, ensure_ascii=False, separators=(",", ":"))
-
 
 def main(paths):
     for path in paths:
@@ -156,8 +145,7 @@ def main(paths):
         print(f"## UKURAN: asli {len(raw):,} karakter -> ringkas {len(text):,} karakter "
               f"({100 - 100 * len(text) / max(len(raw), 1):.0f}% lebih kecil)")
 
-
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        sys.exit("Pemakaian: python3 clean_alert.py <file.json> [...]")
+        sys.exit("Use: python3 clean_alert.py <file.json> [...]")
     main(sys.argv[1:])
