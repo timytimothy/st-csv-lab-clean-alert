@@ -1,16 +1,8 @@
-"""
-streamlit_app.py - Web interface for clean_alert.py.
-Paste the alert JSON into the text box, click Summarize, and the cleaned result appears.
-clean_alert.py must be in the same folder and does not need to be modified.
-"""
 import json
-
 import streamlit as st
 import streamlit.components.v1 as components
-
 from clean_alert import clean_doc, fmt
 
-# English labels for the drop reasons defined in clean_alert.py
 REASON_EN = {
     "signal.* (legacy)": "signal.* (legacy)",
     "investigation guide/setup": "investigation guide/setup",
@@ -26,7 +18,6 @@ st.caption(
     "then click Summarize."
 )
 
-
 def parse_docs(raw: str):
     """Same as load_docs() in clean_alert.py, but reads from text instead of a file."""
     try:
@@ -41,7 +32,6 @@ def parse_docs(raw: str):
         else:
             flat.append(d)
     return flat
-
 
 def build_text(raw: str) -> str:
     docs = parse_docs(raw)
@@ -69,7 +59,6 @@ def build_text(raw: str) -> str:
         f"({saved:.0f}% smaller)"
     )
     return text
-
 
 def copy_button(text: str):
     """Render a button that copies `text` to the clipboard."""
@@ -106,7 +95,6 @@ def copy_button(text: str):
         """,
         height=50,
     )
-
 
 raw = st.text_area("Alert JSON", height=300, placeholder="Paste JSON here...")
 
